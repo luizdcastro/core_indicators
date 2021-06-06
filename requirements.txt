@@ -1,5 +1,2 @@
-heroku buildpacks:add --index 1 heroku/python
-heroku buildpacks:add --index 2 numrut/ta-lib
 flask
 gunicorn
-talib
