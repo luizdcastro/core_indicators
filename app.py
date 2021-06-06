@@ -24,3 +24,6 @@ def macd():
 
     macd, macdsignal, macdhist = talib.MACD(close, fastperiod=12, slowperiod=26, signalperiod=9)  
     return jsonify({'macd': macd[99], 'macdsignal': macdsignal[99], 'macdhist': macdhist[99]})
+
+port = 5000
+app.run(port=5000 or port)
