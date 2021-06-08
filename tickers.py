@@ -2,7 +2,7 @@ import numpy, requests
 
 baseURL = 'https://api.binance.com/api/v3/klines?'
 
-def candles(symbol, interval, isClosed):
+def tickers(symbol, interval, isClosed):
     limit = 101 if isClosed else 100  
     response = requests.get(f'{baseURL}symbol={symbol}&interval={interval}&limit={limit}')
     candles = response.json()  
@@ -26,5 +26,10 @@ def candles(symbol, interval, isClosed):
     for item in candles:
 	    close_list.append(float(item[4]))
 	    close = numpy.array(close_list) 
+    
+    volume_list = []
+    for item in candles:
+	    volume_list.append(float(item[5]))
+	    volume = numpy.array(volume_list) 
    
-    return {'open': open, 'high': high, 'low': low, 'close': close}
+    return {'open': open, 'high': high, 'low': low, 'close': close, 'volume': volume}
