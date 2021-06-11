@@ -1,16 +1,20 @@
 import talib
 from flask import Flask, request, jsonify
 from tickers import tickers
+from datetime import datetime
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 
 @app.route('/indicators', methods=['POST'])
 def indicators():
     data = request.get_json()
-    symbol, interval, isClosed = data['symbol'], data['interval'], data['isClosed']
+    symbol, interval, limit = data['symbol'], data['interval'], data['limit']
 
-    candles_data = tickers(symbol, interval, isClosed)
+    candles_data = tickers(symbol, interval, limit)
+    open_time = candles_data['open_time']
     open = candles_data['open']
     close = candles_data['close']
+    close_time = candles_data['close_time']
     high = candles_data['high']
     low = candles_data['low']
     volume = candles_data['volume']
@@ -188,182 +192,187 @@ def indicators():
     cdltasukigap = talib.CDLTASUKIGAP(open, high, low, close)
     cdlthrusting = talib.CDLTHRUSTING(open, high, low, close)
     cdltristar = talib.CDLTRISTAR(open, high, low, close)
-    cdltristar = talib.CDLUNIQUE3RIVER(open, high, low, close)
     cdlupsidegap2crows = talib.CDLUPSIDEGAP2CROWS(open, high, low, close)
     cdlxsidegap3methods = talib.CDLXSIDEGAP3METHODS(open, high, low, close)
 
-    return jsonify({
-        'candle': {
-            'open': open[99],
-            'low': low[99],
-            'high': high[99],
-            'close': close[99],
-            'volume': volume[99]
+    list = []
+    for open_time,open,low,high,close,close_time,volume,ad,adosc,obv,atr,natr,trange,avgprice,medprice,typprice,wclprice,beta,correl,linearreg,linearreg_angle,linearreg_intercept,linearreg_slope,stddev,tsf,tsf,ht_dcperiod,ht_dcphase,inphase,quadrature,sine,leadsine,ht_trendmode,atan,ceil,cos,floor,ln,log10,sin,sqrt,tan,tanh,add,div,max,maxindex,min,minindex,mult,sub,sum,upperband,middleband,lowerband,dema,ema,h_trendline,kama,ma,mama,fama,midpoint,midprice,sar,sma,t3,tema,trima,wma,rsi,adx,adxr,apo,aroondown,aroonup,aroonosc,bop,cci,cmo,dx,macd,macdsignal,macdhist,mfi,minus_di,minus_dm,mom,plus_di,plus_dm,ppo,roc,rocp,rocr,slowk,slowd,fastk,fastd,fastk_rsi,fastd_rsi,trix,ultosc,willr,cdl2crows,cdl3blackcrows,cdl3inside,cdl3linestrike,cdl3outside,cdl3starsinsouth,cdl3whitesoldiers,cdlabandonedbaby,cdladvanceblock,cdlbelthold,cdlbreakaway,cdlclosingmarubozu,cdlconcealbabyswall,cdlcounterattack,cdldarkcloudcover,cdldoji,cdldojistar,cdldragonflydoji,cdlengulfing,cdleveningdojistar,cdleveningstar,cdlgapsidesidewhite,cdlgravestonedoji,cdlhammer,cdlhangingman,cdlharami,cdlharamicross,cdlhighwave,cdlhikkake,cdlhikkakemod,cdlhomingpigeon,cdlidentical3crows,cdlinneck,cdlinvertedhammer,cdlkicking,cdlkickingbylength,cdlladderbottom,cdllongleggeddoji,cdllongline,cdlmarubozu,cdlmatchinglow,cdlmathold,cdlmorningdojistar,cdlmorningstar,cdlonneck,cdlpiercing,cdlrickshawman,cdlrisefall3methods,cdlseparatinglines,cdlshootingstar,cdlshortline,cdlspinningtop,cdlstalledpattern,cdlsticksandwich,cdltakuri,cdltasukigap,cdlthrusting,cdltristar,cdlupsidegap2crows,cdlxsidegap3methods in zip(open_time,open,low,high,close,close_time,volume,ad,adosc,obv,atr,natr,trange,avgprice,medprice,typprice,wclprice,beta,correl,linearreg,linearreg_angle,linearreg_intercept,linearreg_slope,stddev,tsf,tsf,ht_dcperiod,ht_dcphase,inphase,quadrature,sine,leadsine,ht_trendmode,atan,ceil,cos,floor,ln,log10,sin,sqrt,tan,tanh,add,div,max,maxindex,min,minindex,mult,sub,sum,upperband,middleband,lowerband,dema,ema,h_trendline,kama,ma,mama,fama,midpoint,midprice,sar,sma,t3,tema,trima,wma,rsi,adx,adxr,apo,aroondown,aroonup,aroonosc,bop,cci,cmo,dx,macd,macdsignal,macdhist,mfi,minus_di,minus_dm,mom,plus_di,plus_dm,ppo,roc,rocp,rocr,slowk,slowd,fastk,fastd,fastk_rsi,fastd_rsi,trix,ultosc,willr,cdl2crows,cdl3blackcrows,cdl3inside,cdl3linestrike,cdl3outside,cdl3starsinsouth,cdl3whitesoldiers,cdlabandonedbaby,cdladvanceblock,cdlbelthold,cdlbreakaway,cdlclosingmarubozu,cdlconcealbabyswall,cdlcounterattack,cdldarkcloudcover,cdldoji,cdldojistar,cdldragonflydoji,cdlengulfing,cdleveningdojistar,cdleveningstar,cdlgapsidesidewhite,cdlgravestonedoji,cdlhammer,cdlhangingman,cdlharami,cdlharamicross,cdlhighwave,cdlhikkake,cdlhikkakemod,cdlhomingpigeon,cdlidentical3crows,cdlinneck,cdlinvertedhammer,cdlkicking,cdlkickingbylength,cdlladderbottom,cdllongleggeddoji,cdllongline,cdlmarubozu,cdlmatchinglow,cdlmathold,cdlmorningdojistar,cdlmorningstar,cdlonneck,cdlpiercing,cdlrickshawman,cdlrisefall3methods,cdlseparatinglines,cdlshootingstar,cdlshortline,cdlspinningtop,cdlstalledpattern,cdlsticksandwich,cdltakuri,cdltasukigap,cdlthrusting,cdltristar,cdlupsidegap2crows,cdlxsidegap3methods):
+        candle =  {      
+         'kline': {
+            'time_open': open_time,
+            'open': open,
+            'low': low,
+            'high': high,
+            'close': close,
+            'time_close': close_time,
+            'volume': volume
         },
-        'volume': {
-            'ad': ad[99],
-            'adosc': adosc[99],
-            'obv': obv[99]
+        'volume_indicators': {
+            'ad': ad,
+            'adosc': adosc,
+            'obv': obv
         },
-        'volatility': {
-            'atr': atr[99],
-            'natr': natr[99],
-            'trange': trange[99]
+        'volatility_indicators': {
+            'atr': atr,
+            'natr': natr,
+            'trange': trange
+        },        
+        'momentum_indicators': {
+            'rsi': rsi,
+            'adx': adx,
+            'adxr': adxr,
+            'apo': apo,
+            'aroon': {'aroondown': aroondown, 'aroonup': aroonup},
+            'aroonosc': aroonosc,
+            'bop': bop,
+            'cci': cci,
+            'cmo': cmo,
+            'dx': dx,
+            'macd': {'macd': macd, 'macdsignal': macdsignal, 'macdhist': macdhist},
+            'mfi': mfi,
+            'minus_di': minus_di,
+            'minus_dm': minus_dm,
+            'mom': mom,
+            'plus_di': plus_di,
+            'plus_dm': plus_dm,
+            'ppo': ppo,
+            'roc': roc,
+            'rocp': rocp,
+            'rocr': rocr,
+            'stoch': {'slowk': slowk, 'slowd': slowd},
+            'stochfast': {'fastk': fastk, 'fastd': fastd},
+            'stochrsi': {'fastkrsi': fastk_rsi, 'fastdrsi': fastd_rsi},
+            'trix': trix,
+            'ultosc': ultosc,
+            'willr': willr
+        },
+         'overlap_studies': {
+            'bbands': {'upperband': upperband,'middleband': middleband, 'lowerband': lowerband },
+            'dema': dema,
+            'ema': ema,
+            'h_trendline': h_trendline,
+            'kama': kama,
+            'ma': ma,
+            'mesa': {'mama': mama, 'fama': fama},
+            'midpoint': midpoint,
+            'midprice': midprice,
+            'sar': sar,
+            'sma': sma,
+            't3': t3,
+            'tema': tema,
+            'trima': trima,
+            'wma': wma
         },
         'price_transform': {
-            'avgprice': avgprice[99],
-            'medprice': medprice[99],
-            'typprice': typprice[99],
-            'wclprice': wclprice[99]
+            'avgprice': avgprice,
+            'medprice': medprice,
+            'typprice': typprice,
+            'wclprice': wclprice
         },
-        'statistic': {
-            'beta': beta[99],
-            'correl': correl[99],
-            'linearreg': linearreg[99],
-            'linearreg_angle': linearreg_angle[99],
-            'linearreg_intercept': linearreg_intercept[99],
-            'linearreg_slope': linearreg_slope[99],
-            'stddev': stddev[99],
-            'tsf': tsf[99],
-            'tsf': tsf[99]
+        'statistic_functions': {
+            'beta': beta,
+            'correl': correl,
+            'linearreg': linearreg,
+            'linearreg_angle': linearreg_angle,
+            'linearreg_intercept': linearreg_intercept,
+            'linearreg_slope': linearreg_slope,
+            'stddev': stddev,
+            'tsf': tsf,
+            'tsf': tsf
         },
-        'cycle': {
-            'ht_dcperiod': ht_dcperiod[99],
-            'ht_dcphase': ht_dcphase[99],
-            'ht_phasor ': {'inphase': inphase[99], 'quadrature': quadrature[99]},
-            'ht_sine': {'sine': sine[99], 'leadsine': leadsine[99]},
-            'ht_trendmode': bool(ht_trendmode[99])
+        'cycle_indicators': {
+            'ht_dcperiod': ht_dcperiod,
+            'ht_dcphase': ht_dcphase,
+            'ht_phasor ': {'inphase': inphase, 'quadrature': quadrature},
+            'ht_sine': {'sine': sine, 'leadsine': leadsine},
+            'ht_trendmode': bool(ht_trendmode)
         },
         'math_transform': {
-            'atan': atan[99],
-            'ceil': ceil[99],
-            'cos': cos[99],
-            'floor': floor[99],
-            'ln': ln[99],
-            'log10': log10[99],
-            'sin': sin[99],
-            'sqrt': sqrt[99],
-            'tan': tan[99],
-            'tanh': tanh[99]
+            'atan': atan,
+            'ceil': ceil,
+            'cos': cos,
+            'floor': floor,
+            'ln': ln,
+            'log10': log10,
+            'sin': sin,
+            'sqrt': sqrt,
+            'tan': tan,
+            'tanh': tanh
         },
         'math_operator': {
-            'add': add[99],
-            'div': div[99],
-            'max': max[99],
-            'maxindex': float(maxindex[99]),
-            'min': min[99],
-            'minindex': float(minindex[99]),
-            'mult': float(mult[99]),
-            'sub': sub[99],
-            'sum': sum[99]
-        },
-        'overlap_studies': {
-            'bbands': {'upperband': upperband[99],'middleband': middleband[99], 'lowerband': lowerband[99] },
-            'dema': dema[99],
-            'ema': ema[99],
-            'h_trendline': h_trendline[99],
-            'kama': kama[99],
-            'ma': ma[99],
-            'mesa': {'mama': mama[99], 'fama': fama[99]},
-            'midpoint': midpoint[99],
-            'midprice': midprice[99],
-            'sar': sar[99],
-            'sma': sma[99],
-            't3': t3[99],
-            'tema': tema[99],
-            'trima': trima[99],
-            'wma': wma[99]
-        },
-        'momentum': {
-            'rsi': rsi[99],
-            'adx': adx[99],
-            'adxr': adxr[99],
-            'apo': apo[99],
-            'aroon': {'aroondown': aroondown[99], 'aroonup': aroonup[99]},
-            'aroonosc': aroonosc[99],
-            'bop': bop[99],
-            'cci': cci[99],
-            'cmo': cmo[99],
-            'dx': dx[99],
-            'macd': {'macd': macd[99], 'macdsignal': macdsignal[99], 'macdhist': macdhist[99]},
-            'mfi': mfi[99],
-            'minus_di': minus_di[99],
-            'minus_dm': minus_dm[99],
-            'mom': mom[99],
-            'plus_di': plus_di[99],
-            'plus_dm': plus_dm[99],
-            'ppo': ppo[99],
-            'roc': roc[99],
-            'rocp': rocp[99],
-            'rocr': rocr[99],
-            'stoch': {'slowk': slowk[99], 'slowd': slowd[99]},
-            'stochfast': {'fastk': fastk[99], 'fastd': fastd[99]},
-            'stochrsi': {'fastkrsi': fastk_rsi[99], 'fastdrsi': fastd_rsi[99]},
-            'trix': trix[99],
-            'ultosc': ultosc[99],
-            'willr': willr[99]
-        },
-        'pattern': {
-            'cdl2crows': bool(cdl2crows[99]),
-            'cdl3blackcrows': bool(cdl3blackcrows[99]),
-            'cdl3inside': bool(cdl3inside[99]),
-            'cdl3linestrike': bool(cdl3linestrike[99]),
-            'cdl3outside': bool(cdl3outside[99]),
-            'cdl3starsinsouth': bool(cdl3starsinsouth[99]),
-            'cdl3whitesoldiers': bool(cdl3whitesoldiers[99]),
-            'cdlabandonedbaby': bool(cdlabandonedbaby[99]),
-            'cdladvanceblock': bool(cdladvanceblock[99]),
-            'cdlbelthold': bool(cdlbelthold[99]),
-            'cdlbreakaway': bool(cdlbreakaway[99]),
-            'cdlclosingmarubozu': bool(cdlclosingmarubozu[99]),
-            'cdlconcealbabyswall': bool(cdlconcealbabyswall[99]),
-            'cdlcounterattack': bool(cdlcounterattack[99]),
-            'cdldarkcloudcover': bool(cdldarkcloudcover[99]),
-            'cdldoji': bool(cdldoji[99]),
-            'cdldojistar': bool(cdldojistar[99]),
-            'cdldragonflydoji': bool(cdldragonflydoji[99]),
-            'cdlengulfing': bool(cdlengulfing[99]),
-            'cdleveningdojistar': bool(cdleveningdojistar[99]),
-            'cdleveningstar': bool(cdleveningstar[99]),
-            'cdlgapsidesidewhite': bool(cdlgapsidesidewhite[99]),
-            'cdlgravestonedoji': bool(cdlgravestonedoji[99]),
-            'cdlhammer': bool(cdlhammer[99]),
-            'cdlhangingman': bool(cdlhangingman[99]),
-            'cdlharami': bool(cdlharami[99]),
-            'cdlharamicross': bool(cdlharamicross[99]),
-            'cdlhighwave': bool(cdlhighwave[99]),
-            'cdlhikkake': bool(cdlhikkake[99]),
-            'cdlhikkakemod': bool(cdlhikkakemod[99]),
-            'cdlhomingpigeon': bool(cdlhomingpigeon[99]),
-            'cdlidentical3crows': bool(cdlidentical3crows[99]),
-            'cdlinneck': bool(cdlinneck[99]),
-            'cdlinvertedhammer': bool(cdlinvertedhammer[99]),
-            'cdlkicking': bool(cdlkicking[99]),
-            'cdlkickingbylength': bool(cdlkickingbylength[99]),
-            'cdlladderbottom': bool(cdlladderbottom[99]),
-            'cdllongleggeddoji': bool(cdllongleggeddoji[99]),
-            'cdllongline': bool(cdllongline[99]),
-            'cdlmarubozu': bool(cdlmarubozu[99]),
-            'cdlmatchinglow': bool(cdlmatchinglow[99]),
-            'cdlmathold': bool(cdlmathold[99]),
-            'cdlmorningdojistar': bool(cdlmorningdojistar[99]),
-            'cdlmorningstar': bool(cdlmorningstar[99]),
-            'cdlonneck': bool(cdlonneck[99]),
-            'cdlpiercing': bool(cdlpiercing[99]),
-            'cdlrickshawman': bool(cdlrickshawman[99]),
-            'cdlrisefall3methods': bool(cdlrisefall3methods[99]),
-            'cdlseparatinglines': bool(cdlseparatinglines[99]),
-            'cdlshootingstar': bool(cdlshootingstar[99]),
-            'cdlshortline': bool(cdlshortline[99]),
-            'cdlspinningtop': bool(cdlspinningtop[99]),
-            'cdlstalledpattern': bool(cdlstalledpattern[99]),
-            'cdlsticksandwich': bool(cdlsticksandwich[99]),
-            'cdltakuri': bool(cdltakuri[99]),
-            'cdltasukigap': bool(cdltasukigap[99]),
-            'cdlthrusting': bool(cdlthrusting[99]),
-            'cdltristar': bool(cdltristar[99]),
-            'cdltristar': bool(cdltristar[99]),
-            'cdlupsidegap2crows': bool(cdlupsidegap2crows[99]),
-            'cdlxsidegap3methods': bool(cdlxsidegap3methods[99])
+            'add': add,
+            'div': div,
+            'max': max,
+            'maxindex': float(maxindex),
+            'min': min,
+            'minindex': float(minindex),
+            'mult': float(mult),
+            'sub': sub,
+            'sum': sum
+        },       
+        'pattern_recognition': {
+            'cdl2crows': bool(cdl2crows),
+            'cdl3blackcrows': bool(cdl3blackcrows),
+            'cdl3inside': bool(cdl3inside),
+            'cdl3linestrike': bool(cdl3linestrike),
+            'cdl3outside': bool(cdl3outside),
+            'cdl3starsinsouth': bool(cdl3starsinsouth),
+            'cdl3whitesoldiers': bool(cdl3whitesoldiers),
+            'cdlabandonedbaby': bool(cdlabandonedbaby),
+            'cdladvanceblock': bool(cdladvanceblock),
+            'cdlbelthold': bool(cdlbelthold),
+            'cdlbreakaway': bool(cdlbreakaway),
+            'cdlclosingmarubozu': bool(cdlclosingmarubozu),
+            'cdlconcealbabyswall': bool(cdlconcealbabyswall),
+            'cdlcounterattack': bool(cdlcounterattack),
+            'cdldarkcloudcover': bool(cdldarkcloudcover),
+            'cdldoji': bool(cdldoji),
+            'cdldojistar': bool(cdldojistar),
+            'cdldragonflydoji': bool(cdldragonflydoji),
+            'cdlengulfing': bool(cdlengulfing),
+            'cdleveningdojistar': bool(cdleveningdojistar),
+            'cdleveningstar': bool(cdleveningstar),
+            'cdlgapsidesidewhite': bool(cdlgapsidesidewhite),
+            'cdlgravestonedoji': bool(cdlgravestonedoji),
+            'cdlhammer': bool(cdlhammer),
+            'cdlhangingman': bool(cdlhangingman),
+            'cdlharami': bool(cdlharami),
+            'cdlharamicross': bool(cdlharamicross),
+            'cdlhighwave': bool(cdlhighwave),
+            'cdlhikkake': bool(cdlhikkake),
+            'cdlhikkakemod': bool(cdlhikkakemod),
+            'cdlhomingpigeon': bool(cdlhomingpigeon),
+            'cdlidentical3crows': bool(cdlidentical3crows),
+            'cdlinneck': bool(cdlinneck),
+            'cdlinvertedhammer': bool(cdlinvertedhammer),
+            'cdlkicking': bool(cdlkicking),
+            'cdlkickingbylength': bool(cdlkickingbylength),
+            'cdlladderbottom': bool(cdlladderbottom),
+            'cdllongleggeddoji': bool(cdllongleggeddoji),
+            'cdllongline': bool(cdllongline),
+            'cdlmarubozu': bool(cdlmarubozu),
+            'cdlmatchinglow': bool(cdlmatchinglow),
+            'cdlmathold': bool(cdlmathold),
+            'cdlmorningdojistar': bool(cdlmorningdojistar),
+            'cdlmorningstar': bool(cdlmorningstar),
+            'cdlonneck': bool(cdlonneck),
+            'cdlpiercing': bool(cdlpiercing),
+            'cdlrickshawman': bool(cdlrickshawman),
+            'cdlrisefall3methods': bool(cdlrisefall3methods),
+            'cdlseparatinglines': bool(cdlseparatinglines),
+            'cdlshootingstar': bool(cdlshootingstar),
+            'cdlshortline': bool(cdlshortline),
+            'cdlspinningtop': bool(cdlspinningtop),
+            'cdlstalledpattern': bool(cdlstalledpattern),
+            'cdlsticksandwich': bool(cdlsticksandwich),
+            'cdltakuri': bool(cdltakuri),
+            'cdltasukigap': bool(cdltasukigap),
+            'cdlthrusting': bool(cdlthrusting),
+            'cdltristar': bool(cdltristar),
+            'cdlupsidegap2crows': bool(cdlupsidegap2crows),
+            'cdlxsidegap3methods': bool(cdlxsidegap3methods)
         }
-    })
+    } 
+        list.append(candle)              
+
+    return jsonify(list[100:])
