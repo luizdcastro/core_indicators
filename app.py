@@ -200,7 +200,7 @@ def indicators():
         candle =  {    
          'exchange': exchange,
          'symbol': symbol,
-         'interval': interval,
+         'interval': interval,         
          'kline': {             
             'time_open': open_time,
             'open': open,
@@ -286,7 +286,7 @@ def indicators():
         'cycle_indicators': {
             'ht_dcperiod': ht_dcperiod,
             'ht_dcphase': ht_dcphase,
-            'ht_phasor ': {'inphase': inphase, 'quadrature': quadrature},
+            'ht_phasor': {'inphase': inphase, 'quadrature': quadrature},
             'ht_sine': {'sine': sine, 'leadsine': leadsine},
             'ht_trendmode': bool(ht_trendmode)
         },
