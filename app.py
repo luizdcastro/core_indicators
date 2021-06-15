@@ -8,7 +8,7 @@ app.config['JSON_SORT_KEYS'] = False
 @app.route('/indicators', methods=['POST'])
 def indicators():
     data = request.get_json()
-    symbol, interval, limit = data['symbol'], data['interval'], data['limit']
+    exchange, symbol, interval, limit = data['exchange'], data['symbol'], data['interval'], data['limit']    
 
     candles_data = tickers(symbol, interval, limit)
     open_time = candles_data['open_time']
@@ -197,8 +197,11 @@ def indicators():
 
     list = []
     for open_time,open,low,high,close,close_time,volume,ad,adosc,obv,atr,natr,trange,avgprice,medprice,typprice,wclprice,beta,correl,linearreg,linearreg_angle,linearreg_intercept,linearreg_slope,stddev,tsf,tsf,ht_dcperiod,ht_dcphase,inphase,quadrature,sine,leadsine,ht_trendmode,atan,ceil,cos,floor,ln,log10,sin,sqrt,tan,tanh,add,div,max,maxindex,min,minindex,mult,sub,sum,upperband,middleband,lowerband,dema,ema,h_trendline,kama,ma,mama,fama,midpoint,midprice,sar,sma,t3,tema,trima,wma,rsi,adx,adxr,apo,aroondown,aroonup,aroonosc,bop,cci,cmo,dx,macd,macdsignal,macdhist,mfi,minus_di,minus_dm,mom,plus_di,plus_dm,ppo,roc,rocp,rocr,slowk,slowd,fastk,fastd,fastk_rsi,fastd_rsi,trix,ultosc,willr,cdl2crows,cdl3blackcrows,cdl3inside,cdl3linestrike,cdl3outside,cdl3starsinsouth,cdl3whitesoldiers,cdlabandonedbaby,cdladvanceblock,cdlbelthold,cdlbreakaway,cdlclosingmarubozu,cdlconcealbabyswall,cdlcounterattack,cdldarkcloudcover,cdldoji,cdldojistar,cdldragonflydoji,cdlengulfing,cdleveningdojistar,cdleveningstar,cdlgapsidesidewhite,cdlgravestonedoji,cdlhammer,cdlhangingman,cdlharami,cdlharamicross,cdlhighwave,cdlhikkake,cdlhikkakemod,cdlhomingpigeon,cdlidentical3crows,cdlinneck,cdlinvertedhammer,cdlkicking,cdlkickingbylength,cdlladderbottom,cdllongleggeddoji,cdllongline,cdlmarubozu,cdlmatchinglow,cdlmathold,cdlmorningdojistar,cdlmorningstar,cdlonneck,cdlpiercing,cdlrickshawman,cdlrisefall3methods,cdlseparatinglines,cdlshootingstar,cdlshortline,cdlspinningtop,cdlstalledpattern,cdlsticksandwich,cdltakuri,cdltasukigap,cdlthrusting,cdltristar,cdlupsidegap2crows,cdlxsidegap3methods in zip(open_time,open,low,high,close,close_time,volume,ad,adosc,obv,atr,natr,trange,avgprice,medprice,typprice,wclprice,beta,correl,linearreg,linearreg_angle,linearreg_intercept,linearreg_slope,stddev,tsf,tsf,ht_dcperiod,ht_dcphase,inphase,quadrature,sine,leadsine,ht_trendmode,atan,ceil,cos,floor,ln,log10,sin,sqrt,tan,tanh,add,div,max,maxindex,min,minindex,mult,sub,sum,upperband,middleband,lowerband,dema,ema,h_trendline,kama,ma,mama,fama,midpoint,midprice,sar,sma,t3,tema,trima,wma,rsi,adx,adxr,apo,aroondown,aroonup,aroonosc,bop,cci,cmo,dx,macd,macdsignal,macdhist,mfi,minus_di,minus_dm,mom,plus_di,plus_dm,ppo,roc,rocp,rocr,slowk,slowd,fastk,fastd,fastk_rsi,fastd_rsi,trix,ultosc,willr,cdl2crows,cdl3blackcrows,cdl3inside,cdl3linestrike,cdl3outside,cdl3starsinsouth,cdl3whitesoldiers,cdlabandonedbaby,cdladvanceblock,cdlbelthold,cdlbreakaway,cdlclosingmarubozu,cdlconcealbabyswall,cdlcounterattack,cdldarkcloudcover,cdldoji,cdldojistar,cdldragonflydoji,cdlengulfing,cdleveningdojistar,cdleveningstar,cdlgapsidesidewhite,cdlgravestonedoji,cdlhammer,cdlhangingman,cdlharami,cdlharamicross,cdlhighwave,cdlhikkake,cdlhikkakemod,cdlhomingpigeon,cdlidentical3crows,cdlinneck,cdlinvertedhammer,cdlkicking,cdlkickingbylength,cdlladderbottom,cdllongleggeddoji,cdllongline,cdlmarubozu,cdlmatchinglow,cdlmathold,cdlmorningdojistar,cdlmorningstar,cdlonneck,cdlpiercing,cdlrickshawman,cdlrisefall3methods,cdlseparatinglines,cdlshootingstar,cdlshortline,cdlspinningtop,cdlstalledpattern,cdlsticksandwich,cdltakuri,cdltasukigap,cdlthrusting,cdltristar,cdlupsidegap2crows,cdlxsidegap3methods):
-        candle =  {      
-         'kline': {
+        candle =  {    
+         'exchange': exchange,
+         'symbol': symbol,
+         'interval': interval,
+         'kline': {             
             'time_open': open_time,
             'open': open,
             'low': low,
@@ -373,6 +376,6 @@ def indicators():
             'cdlxsidegap3methods': bool(cdlxsidegap3methods)
         }
     } 
-        list.append(candle)              
+        list.append(candle)    
 
     return jsonify(list[100:])
